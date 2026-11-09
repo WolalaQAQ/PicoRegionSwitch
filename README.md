@@ -11,7 +11,7 @@ Each region keeps its own application data. The worker calls the official region
 service without upgrading the OS or changing base regional properties, language,
 time zone or the factory country file. Wi-Fi country follows the official service.
 
-**`0.6.0-dev.1` is a development release.** First installation from an uninitialized
+**Current version: `0.6.0`.** First installation from an uninitialized
 tool state, preparation recovery, first-boot verification, CN/global roundtrips,
 panel-independent completion, fault rollback and overlay removal/startup have been
 validated on a PICO 4 Pro running CN OS 5.13.7. Hardware testing used the listed CN
