@@ -1,0 +1,151 @@
+name: Test, build and release
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to release; blank runs CI only'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: region-${{ inputs.tag || github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  RELEASE_TAG: ${{ inputs.tag || (github.ref_type == 'tag' && github.ref_name || '') }}
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install pinned Android SDK and NDK
+        run: >-
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          "platforms;android-35" "build-tools;35.0.0" "ndk;26.1.10909125"
+      - name: Python tests and public-source checks
+        run: python3 -B -m unittest discover -s tests -v
+      - name: Fetch pinned host-test library
+        run: python3 tools/dependencies.py
+      - name: JVM fault tests, Android APK and arm64 native build
+        run: python3 tools/build.py --output build/ci
+      - name: Check release tag
+        if: env.RELEASE_TAG != ''
+        run: python3 tools/release.py --tag "$RELEASE_TAG"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: runtime-ci-only
+          path: |
+            build/ci/PicoRegionSwitch.apk
+            build/ci/region-rename
+            build/ci/host-tests.txt
+          if-no-files-found: error
+          retention-days: 7
+
+  module:
+    needs: test
+    if: github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && inputs.tag != '')
+    runs-on: ubuntu-24.04
+    environment: release
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Check version before accessing release inputs
+        run: python3 tools/release.py --tag "$RELEASE_TAG"
+      - name: Install pinned Android SDK and NDK
+        run: >-
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          "platforms;android-35" "build-tools;35.0.0" "ndk;26.1.10909125"
+      - name: Fetch build libraries
+        run: python3 tools/dependencies.py --framework
+      - name: Fetch and verify vendor inputs
+        env:
+          REGION_INPUTS_URL: ${{ secrets.REGION_INPUTS_URL }}
+        run: python3 tools/inputs.py fetch --directory build/inputs
+      - name: Prepare stable panel signing key
+        env:
+          PANEL_KEYSTORE_B64: ${{ secrets.PANEL_KEYSTORE_B64 }}
+        run: |
+          python3 - <<'PY'
+          import base64, os
+          from pathlib import Path
+          path = Path(os.environ['RUNNER_TEMP']) / 'region-panel.jks'
+          path.write_bytes(base64.b64decode(os.environ['PANEL_KEYSTORE_B64'], validate=True))
+          path.chmod(0o600)
+          PY
+      - name: Build complete offline installable module
+        env:
+          PANEL_STORE_PASSWORD: ${{ secrets.PANEL_STORE_PASSWORD }}
+          PANEL_KEY_ALIAS: ${{ secrets.PANEL_KEY_ALIAS }}
+        run: >-
+          python3 tools/build.py --output build/release --inputs build/inputs
+          --keystore "$RUNNER_TEMP/region-panel.jks" --key-alias "$PANEL_KEY_ALIAS"
+      - name: Validate ZIP and stage release attachments
+        run: |
+          python3 tools/verify.py --build build/release
+          python3 tools/release.py --tag "$RELEASE_TAG" --build build/release --output build/publish/attachments
+          cp build/release/release-notes.md build/publish/release-notes.md
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-attachments
+          path: build/publish/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Remove temporary signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/region-panel.jks"
+
+  publish:
+    needs: module
+    runs-on: ubuntu-24.04
+    environment: release
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-attachments
+          path: release
+      - name: Publish only the verified build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # A single artifact root preserves the attachment directory without path inference.
+          assets=(release/attachments/*)
+          notes=release/release-notes.md
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo 'Release exists. Refusing to replace published assets automatically.' >&2
+            exit 1
+          fi
+          options=()
+          if [[ "$RELEASE_TAG" == *-* ]]; then options+=(--prerelease); fi
+          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --draft \
+            --title "PicoRegionSwitch $RELEASE_TAG" --notes-file "$notes" "${options[@]}"
+          gh release edit "$RELEASE_TAG" --draft=false

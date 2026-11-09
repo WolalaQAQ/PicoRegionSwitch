@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "files": {
+    "cn/matrix.apk": {
+      "sha256": "34ca6731c3864ecae5d0f27ff3d3463efc8eac11a98bdb5056bb721cc4126c1b",
+      "size": 92004253
+    },
+    "cn/store.apk": {
+      "sha256": "23152bb83e63d3a9577a407e33cf3b06e7aca1751e0e95e62277ef34e92e24cf",
+      "size": 73158724
+    },
+    "cn/user_center.apk": {
+      "sha256": "b51480cbabc7b50ddc8aa5e361e157618c358703db1bc01ac47c5664d9e52802",
+      "size": 22976589
+    },
+    "cn/fitness.apk": {
+      "sha256": "5c70417536c49dec77f1906d2220c324408e6fdaf6c7c90b7166d47383e46e4d",
+      "size": 19642738
+    },
+    "cn/friends.apk": {
+      "sha256": "af7463ed8281da1b77f56b56d62f44251332010ace4ffdbb345338a46ef7bf50",
+      "size": 37490547
+    },
+    "cn/home.apk": {
+      "sha256": "20daed2558ed6fbeee69f88b99fde60dce05d18670f5216b44282bba5c4fe067",
+      "size": 23897630
+    },
+    "cn/avatar.apk": {
+      "sha256": "b19fade3925809b78135e237c8dbc9a8ceb9c119bd7b643b67dd228edd86097f",
+      "size": 184329673
+    },
+    "cn/swift.apk": {
+      "sha256": "f8f78875d2fd0034020db181988955be847aac4df5e01bf841633dc55237508a",
+      "size": 113407920
+    },
+    "global/matrix.apk": {
+      "sha256": "e3526ead6143f86b6635f14d1ece8af7211bde2552e883faafec717e129b35d8",
+      "size": 92457771
+    },
+    "global/store.apk": {
+      "sha256": "bb58293941022fb3e65b12aebee1a08f765e404519d72122842c3954a2a3eeff",
+      "size": 72243171
+    },
+    "global/user_center.apk": {
+      "sha256": "e0a9b3d2dc665aca17112c09611177763e8f6dc339e6be3a44ae870bfb4143b7",
+      "size": 23347168
+    },
+    "global/fitness.apk": {
+      "sha256": "49a954f6cf77f1602a3f8a06f4c19fb2028158cb0b5fa6a74710bd20adddaa55",
+      "size": 15655158
+    },
+    "global/friends.apk": {
+      "sha256": "b7899b0a5667882c4d1f123ca2c848e16b065685cc06de11e8ae96bc64b36e93",
+      "size": 45723147
+    },
+    "global/home.apk": {
+      "sha256": "f353814d6dc6796d33e432f8dae33dc5640978a8ecef7da8bfa37f474197be70",
+      "size": 31466682
+    },
+    "global/avatar.apk": {
+      "sha256": "af7d4fd797d562f7a917b6734c4a0f69637bc7a88145bdc99b7a0983d53d67e3",
+      "size": 186625163
+    },
+    "global/swift.apk": {
+      "sha256": "abb14e3fb8928e836b18e1309f603163e99853430eca027c8a2e06d5b6fb2ada",
+      "size": 113690336
+    },
+    "stock-cn/matrix.apk": {
+      "sha256": "5507947f08c2a273fc089eb4c1cbda92bd5e04c8fb9013e2f8acd23c2a44b5c7",
+      "size": 101117844
+    },
+    "stock-cn/store.apk": {
+      "sha256": "a3fad58ee9d015e76267342eb48f42358a35b63a6b60db9a18b5794da79d8bca",
+      "size": 72126729
+    },
+    "stock-cn/user_center.apk": {
+      "sha256": "b51480cbabc7b50ddc8aa5e361e157618c358703db1bc01ac47c5664d9e52802",
+      "size": 22976589
+    },
+    "stock-cn/fitness.apk": {
+      "sha256": "f26c3acf526410bc0a11076ddfa0f7bab1deb6fd7a5ec9512ecfe0b5aa008f7c",
+      "size": 35261902
+    },
+    "stock-cn/friends.apk": {
+      "sha256": "f9d208ae5b85c49bb55e2c295c2c2d6de751e1b73c9650fdc2bc136a744e8f07",
+      "size": 72121220
+    },
+    "stock-cn/home.apk": {
+      "sha256": "c487a11ecf9c040ac13f5580a80b0b7ec851c87bc4502dd9d33b6637a2b0ab2c",
+      "size": 31398169
+    },
+    "stock-cn/avatar.apk": {
+      "sha256": "b19fade3925809b78135e237c8dbc9a8ceb9c119bd7b643b67dd228edd86097f",
+      "size": 184329673
+    },
+    "stock-cn/swift.apk": {
+      "sha256": "f8f78875d2fd0034020db181988955be847aac4df5e01bf841633dc55237508a",
+      "size": 113407920
+    },
+    "services-original.jar": {
+      "sha256": "bca28757d42e6198a332db77c024c77e2ec66cf1183fbba8a6c47d0e2d7b0125",
+      "size": 13317240
+    }
+  }
+}
