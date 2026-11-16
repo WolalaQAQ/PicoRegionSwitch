@@ -37,6 +37,16 @@
 
 首次安装和撤销映射已在上述基线上验证，启动失败的救援步骤见 [恢复说明](RECOVERY.md)。
 
+## 社区
+
+使用求助、交流和版本更新通知，欢迎加入 Pico-Enhance 社区。
+
+<a href="https://discord.gg/ueSEydeVD8"><img src="https://img.shields.io/badge/Discord-Join%20Pico--Enhance-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="加入 Pico-Enhance Discord"></a>
+
+**QQ 群：** 1129699813，用 QQ 扫描下方二维码即可加入。
+
+<img src="assets/community/qq-group-qr.png" alt="Pico-Enhance QQ 群二维码" width="240">
+
 ## 构建和发布
 
 [构建](BUILDING.md) · [CI／Release 配置](RELEASING.md) · [变更记录](CHANGELOG_zh.md)
